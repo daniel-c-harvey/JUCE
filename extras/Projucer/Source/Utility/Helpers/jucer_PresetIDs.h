@@ -399,6 +399,8 @@ namespace Ids
     DECLARE_ID (osxCompatibility);
     DECLARE_ID (iosCompatibility);
 
+    DECLARE_ID(useAbsoluteModulePath);
+
     const Identifier ID ("id");
     const Identifier ID_uppercase ("ID");
     const Identifier class_ ("class");

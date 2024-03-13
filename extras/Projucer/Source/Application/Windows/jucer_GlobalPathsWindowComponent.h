@@ -82,7 +82,9 @@ public:
 
     ~GlobalPathsWindowComponent() override
     {
-        getGlobalProperties().removeChangeListener (this);
+        auto& properties = getGlobalProperties();
+        properties.setValue(Ids::useAbsoluteModulePath, useAbsolutePathValue.getValue());
+        properties.removeChangeListener(this);
 
         auto juceValue = getAppSettings().getStoredPath (Ids::defaultJuceModulePath, TargetOS::getThisOS());
         auto userValue = getAppSettings().getStoredPath (Ids::defaultUserModulePath, TargetOS::getThisOS());
@@ -219,6 +221,10 @@ private:
                      String ("A path to a folder containing any custom modules that you wish to use.")
                      + (isThisOS ? " Use the button below to re-scan new paths." : ""));
 
+        builder.add(new BooleanPropertyComponent (useAbsolutePathValue, "Use Absolute Paths", "Use Absolute Paths"),
+                    String("If selected the project exporter will use absolute paths to the JUCE modules to allow project portability."));
+
+
         builder.add (new LabelPropertyComponent ("SDKs"), {});
 
         builder.add (new FilePathPropertyComponent (vstPathValue,  "VST (Legacy) SDK", true, isThisOS),
@@ -268,6 +274,7 @@ private:
         jucePathValue             = settings.getStoredPath (Ids::jucePath, os);
         juceModulePathValue       = settings.getStoredPath (Ids::defaultJuceModulePath, os);
         userModulePathValue       = settings.getStoredPath (Ids::defaultUserModulePath, os);
+        useAbsolutePathValue      = settings.getGlobalProperties().getBoolValue (Ids::useAbsoluteModulePath);
         vstPathValue              = settings.getStoredPath (Ids::vstLegacyPath, os);
         aaxPathValue              = settings.getStoredPath (Ids::aaxPath, os);
         araPathValue              = settings.getStoredPath (Ids::araPath, os);
@@ -280,6 +287,7 @@ private:
         jucePathValue            .resetToDefault();
         juceModulePathValue      .resetToDefault();
         userModulePathValue      .resetToDefault();
+        useAbsolutePathValue     = getAppSettings().getGlobalProperties().getBoolValue(Ids::useAbsoluteModulePath);
         vstPathValue             .resetToDefault();
         aaxPathValue             .resetToDefault();
         araPathValue             .resetToDefault();
@@ -290,7 +298,7 @@ private:
     }
 
     //==============================================================================
-    Value selectedOSValue;
+    Value selectedOSValue, useAbsolutePathValue;
 
     ValueTreePropertyWithDefault jucePathValue, juceModulePathValue, userModulePathValue,
                                  vstPathValue, aaxPathValue, araPathValue, androidSDKPathValue,
